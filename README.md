@@ -76,14 +76,32 @@ Please Note:
 * User information is fetched via auth-token present in the HTTP header
 * Nearby cab radius is assumed to value ˜2 Km
 * User location referenced by latitude and longitude (lat & long) is provided / derived by the frontend application and passed as parameter to the Rest API as one of the input's
-* Wait time is calculated based on the distance between 2 points and assuming the city drving limits 30Km/hr which is 0.5km in 1 min
-
-### System Setup
---- 
-  * To Do
+* Wait time is calculated based on the distance between 2 points and assuming the city drving limits 30Km/hr (0.5km/min)
+* Soft delete implementation used in all teh api service
 
 ### API Endpoints
 ---
+| HTTP Method | Endpoint| Summary |
+|:-----------:|------------|---|
+| GET | /api/v1/taxi | Get all taxi avilable | 
+| POST | /api/v1/taxi | register a new taxi |
+| PUT | /api/v1/taxi | Update taxi information |
+| DELETE | /api/v1/taxi/<:id> | Delete a taxi        |
+| | | |
+| POST | /api/v1/booking | book a taxi service | 
+| PUT | /api/v1/booking | Update taxi service |
+| GET | /api/v1/booking | get all taxi booking |
+| DELETE | /api/v1/booking/<:id> | delete booking |
+| | | |
+| POST | /api/v1/payment | make payment |
+| GET | /api/v1/payment | get payment information by booking details |
+| DELETE | /api/v1/payment | *payment information cannot be deleted* |
+
+
+
+
+### System Setup
+--- 
   * To Do
 
 ### Test
