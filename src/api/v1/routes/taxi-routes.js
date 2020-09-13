@@ -12,7 +12,7 @@ const router = new Router();
  */
 router.get("/", (req, res) => {
     // get all taxi's based on given type
-    let taxis = Taxi.getAllDetails(req.query)
+    let taxis = Taxi.getAllAvilableTaxis(req.query)
     return res.json(taxis)
 });
 

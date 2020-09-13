@@ -6,8 +6,10 @@ const { Car, carSchema }  = require('./car');
 const { Driver, driverSchema}  = require('./driver');
 const { Location, locationSchema} = require('./location');
 
+const { pythagorean_distance } = require('../../lib/utils');
+
 // Taxi
-var schema = {
+var taxischema = {
     "id": "/SimpleTaxiSchema",
     "type": "object",
     "properties": {
@@ -28,11 +30,13 @@ v.addSchema(locationSchema, '/SimpleLocationSchema');
 
 
 const db = new LocalStorage('./data');
+const db_name = 'trips';
 
 const TAXI_STATUS = {
     AVAILABLE: 'AVAILABLE',
     BOOKED: 'BOOKED',
-    NOTAVAILABLE: 'NOTAVAILABLE'
+    NOTAVAILABLE: 'NOTAVAILABLE',
+    DELETED: 'DELETED'
 }
 
 const TAXI_TYPE = {
@@ -57,22 +61,22 @@ Taxi.prototype = {
     add: function(){
         this.id = uniqid('taxi-');
         // save the data
-        let taxis = db.getItem('taxis') ? JSON.parse(
-                        db.getItem('taxis')
+        let taxis = db.getItem(db_name) ? JSON.parse(
+                        db.getItem(db_name)
                     ) : [];
         taxis.push(this.toJSON());
-        db.setItem('taxis', JSON.stringify(taxis));
+        db.setItem(db_name, JSON.stringify(taxis));
     },
     update: function() {
         // save the data
-        let taxis = db.getItem('taxis') ? JSON.parse(
-            db.getItem('taxis')
+        let taxis = db.getItem(db_name) ? JSON.parse(
+            db.getItem(db_name)
         ) : [];
-        let taxiIndex = taxis.findIndex(ele => ele.id === this._id);
+        let taxiIndex = taxis.findIndex(ele => ele.id === this.id);
         taxis[taxiIndex] = this.toJSON();
 
         // taxis.push(this.toJSON());
-        db.setItem('taxis', JSON.stringify(taxis));
+        db.setItem(db_name, JSON.stringify(taxis));
     },
     toJSON: function() {
         return {
@@ -84,42 +88,67 @@ Taxi.prototype = {
             status: this.status
         };
     },
-    delete: function(){
-        // save the data
-        let taxis = db.getItem('taxis') ? JSON.parse(
-            db.getItem('taxis')
+    updateStatus: function(updateObj) {
+        // update the data
+        let taxis = db.getItem(db_name) ? JSON.parse(
+            db.getItem(db_name)
         ) : [];
-        let taxiIndex = taxis.findIndex(ele => ele.id === this._id);
-        if (taxiIndex) {
-            taxis.splice(taxiIndex,1);
+        let taxiIndex = taxis.findIndex(ele => ele.id === this.id);
+        console.log(taxiIndex);
+        if (taxiIndex >= 0) {
+            Object.assign(taxis[taxiIndex], updateObj);
+
             // taxis.push(this.toJSON());
-            db.setItem('taxis', JSON.stringify(taxis));
+            db.setItem(db_name, JSON.stringify(taxis));
         }
         return taxiIndex;
+    },
+    delete: function(){
+        // hard delete not recommended 
+        // unless the requirement defines this feature
+        // soft delete the record
+        this.updateStatus({status: TAXI_STATUS.DELETED});
+    },
+    markBooked: function(){
+        this.updateStatus({status: TAXI_STATUS.BOOKED});
+    },
+    endtrip: function(location){
+        this.updateStatus({
+            status: TAXI_STATUS.AVAILABLE,
+            location
+        });
     }
 }
 
-
 Taxi.getDetails = function(id) {
-    let taxis = db.getItem('taxis') ? JSON.parse(
-        db.getItem('taxis')
+    let taxis = db.getItem(db_name) ? JSON.parse(
+        db.getItem(db_name)
     ) : [];
 
     taxi = taxis.filter(ele => ele.id === id);
     if (taxi && taxi.length > 0){
-        return new Taxi(taxi);
+        return new Taxi(taxi[0]);
     } else {
         return null;
     }
 }
 
 
-Taxi.getAllDetails = function({ taxi_type }) {
-    let taxis = db.getItem('taxis') ? JSON.parse(
-        db.getItem('taxis')
+// get all available taxis
+//
+Taxi.getAllAvilableTaxis = function({ taxi_type }) {
+    let taxis = db.getItem(db_name) ? JSON.parse(
+        db.getItem(db_name)
     ) : [];
     if (taxi_type) {
-        taxis = taxis.filter(ele => ele.taxi_type === taxi_type);
+        taxis = taxis.filter(ele => (
+            ele.taxi_type === taxi_type &&
+            ele.status === TAXI_STATUS.AVAILABLE
+        ));
+    } else {
+        taxis = taxis.filter(ele => (
+            ele.status === TAXI_STATUS.AVAILABLE
+        ));
     }
     let taxiObjs = [];
     taxis.forEach(element => {
@@ -128,9 +157,43 @@ Taxi.getAllDetails = function({ taxi_type }) {
     return taxiObjs;
 }
 
+Taxi.getNearestTaxi = function(src){
+    let nearestkm = undefined;
+    let nearestTaxi = null;
+
+    let taxis = db.getItem(db_name) ? JSON.parse(
+        db.getItem(db_name)
+    ) : [];
+
+    taxis = taxis.filter(ele => (
+        ele.status === TAXI_STATUS.AVAILABLE
+    ));
+
+    // TO-DO 
+    // this loop is heavy O(n)
+    // Best method is to calculate the progressive increase in 
+    // cordinates values and get the taxis that are near and return them
+    taxis.forEach(taxi => {
+        let taxiDistance = pythagorean_distance(src, taxi.location);
+        if (nearestkm == undefined || (taxiDistance < nearestkm) ){
+            nearestkm = taxiDistance;
+            nearestTaxi = taxi;
+        }
+    });
+
+    if (nearestTaxi) {
+        return new Taxi(nearestTaxi);
+    } else {
+        return null;
+    }
+}
+
+
+// Validate the taxi input object to have 
+// necessary information for sucessfull operation
 Taxi.validateReq = function(reqObject){
-    return v.validate(reqObject, schema).valid;
+    return v.validate(reqObject, taxischema).valid;
 }
 
 //export Student object as a module
-module.exports = { Taxi, TAXI_STATUS, TAXI_TYPE };
+module.exports = { Taxi, taxischema, TAXI_STATUS, TAXI_TYPE };

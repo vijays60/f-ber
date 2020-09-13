@@ -92,12 +92,6 @@ Please Note:
 | PUT | /api/v1/booking | Update taxi service |
 | GET | /api/v1/booking | get all taxi booking |
 | DELETE | /api/v1/booking/<:id> | delete booking |
-| | | |
-| POST | /api/v1/payment | make payment |
-| GET | /api/v1/payment | get payment information by booking details |
-| DELETE | /api/v1/payment | *payment information cannot be deleted* |
-
-
 
 
 ### System Setup

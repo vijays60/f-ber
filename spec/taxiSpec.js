@@ -41,7 +41,6 @@ describe('Taxi-service', function () {
     it(' get record ' + taxi_id + ' ', function(done){
         request.get(
             endpoint+'/'+taxi_id, 
-            {json: true, body: sampledata}, 
             function (error, response) {
                 expect(response.statusCode).toEqual(200);
                 done();
