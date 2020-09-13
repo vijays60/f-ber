@@ -4,7 +4,7 @@
   "description": "füber, an on call taxi service",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jasmine-node spec",
     "start": "node ./src/"
   },
   "repository": {
@@ -19,6 +19,13 @@
   "homepage": "https://github.com/vijays60/f-ber#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "jsonschema": "^1.2.6",
+    "node-localstorage": "^2.1.6",
+    "uniqid": "^5.2.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "^3.0.0",
+    "request": "^2.88.2"
   }
 }
