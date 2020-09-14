@@ -4,7 +4,7 @@ const server = require('../src');
 const endpoint = 'http://localhost:3000/api/v1/taxi';
 
 describe('Taxi-service', function () {
-    var taxi_id = '';
+    var taxi_id = 'taxi-2pz8btkf1d6azv';
 
     it('should return 200 response code', function (done) {
         request.get(endpoint, function (error, response) {
@@ -33,8 +33,6 @@ describe('Taxi-service', function () {
             }
         }}, function (error, response) {
             expect(response.statusCode).toEqual(200);
-            let res = response.json();
-            taxi_id = res.id;
             done();
         });
     });
@@ -66,7 +64,7 @@ describe('Taxi-service', function () {
         });
     });
     it(' Delete record ' + taxi_id + ' ', function(done){
-        request.get(
+        request.delete(
             endpoint+'/'+taxi_id, 
             {json: true, body: sampledata}, 
             function (error, response) {

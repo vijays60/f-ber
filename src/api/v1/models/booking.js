@@ -62,6 +62,8 @@ function Booking({
     this.destination = destination ? new Location(destination) : {};
     this.status = status ? status : BOOKING_STATUS.STARTED;
     this.cost = 0;
+    this.bookingTime =  new Date().getTime();
+    this.tripEndtime = null;
 }
 
 Booking.prototype = {
@@ -73,7 +75,8 @@ Booking.prototype = {
             source: this.source.toJSON(),
             destination: this.destination.toJSON(),
             status: this.status,
-            cost: this.cost
+            cost: this.cost,
+            bookingTime: this.bookingTime
         };
     },
     add: function() {
@@ -130,7 +133,15 @@ Booking.prototype = {
 
         this.status = BOOKING_STATUS.FINISHED;
 
-        // TO DO calculate the time take
+        this.tripEndtime = new Date().getTime();
+
+        // To calculate the time difference of two dates 
+        let diff_In_Time = this.tripEndtime - this.bookingTime; 
+        
+        // To calculate the no. of mins between two dates 
+        let diff_In_mins = Math.round((diff_In_Time/1000)/60); 
+        this.cost += diff_In_mins;
+
         this.taxi.endtrip(this.destination);
 
         // update booking
