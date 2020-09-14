@@ -8,7 +8,7 @@ const { Location, locationSchema} = require('./location');
 
 const { pythagorean_distance } = require('../../lib/utils');
 
-// Taxi
+// Taxi schema object for validation
 var taxischema = {
     "id": "/SimpleTaxiSchema",
     "type": "object",

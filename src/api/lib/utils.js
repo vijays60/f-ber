@@ -7,6 +7,10 @@ const logger = (req, res, next) => {
     next();
   };
   
+// pythagorean theorem to find distnace between 2 points
+// c= sqrt(a2+b2)
+// To calculate the distance in Km 
+// get the distance and multiple with earth radius value to get in Km
 const pythagorean_distance = function(src, dest){
   var lat = dest.lat - src.lat;
   var long = dest.long - src.long;
@@ -19,6 +23,7 @@ const pythagorean_distance = function(src, dest){
 
 // formula used as per 
 // https://en.wikipedia.org/wiki/Haversine_formula
+// to calcualte the distance between lat and long
 const haversine_distance = function(src, dest) {
     // Radius of the Earth in Km
     var R = 6371; 
@@ -44,13 +49,15 @@ const haversine_distance = function(src, dest) {
   }
 
 
+  /**
+   * calculate the cost for the covered distance 
+   * The price is 1 dogecoin per minute, and 
+   * 2 dogecoin per kilometer. Pink cars cost an additional 5 dogecoin.
+   * @param {*} src 
+   * @param {*} dest 
+   */ 
 const calDistanceCost = function(src, dest){
   let coveredDistance = pythagorean_distance(src, dest);
-  // TO DO calculate the time take
-  // calculate cost
-  // The price is 1 dogecoin per minute, and 
-  // 2 dogecoin per kilometer. Pink cars cost an additional 5 dogecoin.
-
   return (coveredDistance * 2).toFixed(2)
   
 }

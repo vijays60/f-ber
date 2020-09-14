@@ -1,3 +1,6 @@
+/**
+ * Booking services
+ */
 const { Router } = require("express");
 const { Taxi, TAXI_STATUS } = require('../models/taxi');
 const { Booking, BOOKING_STATUS } = require('../models/booking');
@@ -5,18 +8,27 @@ const { Booking, BOOKING_STATUS } = require('../models/booking');
 const router = new Router();
 
 /** 
- * Booking services
+ * Get all booking for given customer
+ * Assumption is that user object is passed to request 
+ * to simulate the value to be replaced by authorised value
  * 
  * Returns: Array of all bookings
  */
 router.get("/", (req, res) => {
     // for the purpose of the demo 
     // lets get the user details from the header
-    let user = req.get('USERNAME');
-    let bookings = Booking.getCustomerBookings({customer: {name: user}});
+    let user_name = req.get('USERNAME');
+
+    let bookings = Booking.getCustomerBookings({customer: {name: user_name}});
     res.json(bookings);
 });
 
+
+/**
+ * Get booking details for id
+ * 
+ * return {*} Booking object
+ */
 router.get("/:id", (req, res) => {
     // get booking id to update
     let booking_id = req.params.id
@@ -30,7 +42,16 @@ router.get("/:id", (req, res) => {
 });
 
 /**
- * Create new Booking 
+ * Register a Booking for customer
+ * 
+ * inpuet : 
+ *  taxi{ taxy_type : <NORMAL|PINK> }
+ *  customer { name: string }
+ *  source : Location( lat: float, long: float)
+ *  destination : Location( lat: float, long: float)
+ * 
+ * return :  Booking object
+ * 
  */
 router.post("/", (req, res) => {
     // validate the input parameter
@@ -48,7 +69,7 @@ router.post("/", (req, res) => {
             // update taxi status
             nearTaxi.markBooked();
 
-            // create new booking 
+            // Create new booking
             let booking = new Booking({
                 taxi: nearTaxi,
                 customer,
@@ -61,7 +82,7 @@ router.post("/", (req, res) => {
             res.json(booking.toJSON());
 
         } else {
-            // if not return no taxis'
+            // if no available return no taxis'
             throw new Error("All taxis are busy servicing please try again later!");
         }
 
@@ -70,6 +91,17 @@ router.post("/", (req, res) => {
     }
 });
 
+/**
+ * Route to cancel or end the trip / booking
+ * using action node to use the same route and multiple behaviour
+ * 
+ * input: {
+ *  action : <END | CANCEL>,
+ *  payload : Location{lat : float, long: float} (mandatory for end trip only)
+ * }
+ * 
+ * return : Booking object
+ */
 router.put("/:id", (req, res) => {
 
     // get booking_id from req params
@@ -82,12 +114,16 @@ router.put("/:id", (req, res) => {
         case "END": 
             // end trip
             let location = payload;
-            let booking = Booking.getDetails(booking_id);
-            if(booking){
-                booking.completeTrip(location);
-                return res.json(booking.toJSON());
+            if (location) {
+                let booking = Booking.getDetails(booking_id);
+                if(booking){
+                    booking.completeTrip(location);
+                    return res.json(booking.toJSON());
+                } else {
+                    throw new Error("No booking such information available");
+                }
             } else {
-                throw new Error("No booking such information available");
+                throw new Error("Unable to find end location!");
             }
         case "CANCEL":
             // cancel trip action
@@ -100,6 +136,17 @@ router.put("/:id", (req, res) => {
     
 });
 
+/**
+ * Soft delete function 
+ * mark status of booking as DELETED
+ * 
+ * innput : booking_id
+ * 
+ * return : {
+ *  status: <success|error>
+ *  payload: Booking Object
+ * }
+ */
 router.delete("/:id", (req, res) => {
     // get booking_id from req params
     let booking_id = req.params.id

@@ -1,6 +1,8 @@
 # f-ber
 [usecase-diagram]: https://user-images.githubusercontent.com/714508/92889888-41f0d380-f434-11ea-9138-81b7fc602d99.png "Use-case Diagram"
 
+[uber_classDiagram]: https://user-images.githubusercontent.com/714508/93084590-ea5f9b80-f6b1-11ea-9b41-7321c5c6088d.png "class diagram"
+
 ### Problem Stament
 ---
 
@@ -69,6 +71,8 @@ Please Note:
 
 ![use-case-diagram][usecase-diagram]
 
+## Class Diagram
+![class-diagram][uber_classDiagram]
 
 ### System Assumptions
 ---
@@ -89,17 +93,26 @@ Please Note:
 | DELETE | /api/v1/taxi/<:id> | Delete a taxi        |
 | | | |
 | POST | /api/v1/booking | book a taxi service | 
-| PUT | /api/v1/booking | Update taxi service |
-| GET | /api/v1/booking | get all taxi booking |
+| PUT | /api/v1/booking | end booking  |
+| GET | /api/v1/booking | get all taxi bookings |
 | DELETE | /api/v1/booking/<:id> | delete booking |
 
 
 ### System Setup
 --- 
-  * To Do
+  * To Install 
+```
+npm install
+npm start
+```
+
+Now in your browser open URL 
+http://localhost:3000/
 
 ### Test
 ---
-  * To do 
+  * To run test
 
-
+```
+npm test
+```

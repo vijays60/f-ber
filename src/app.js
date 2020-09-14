@@ -1,36 +1,45 @@
+/**
+ * server configureation 
+ * and all routes definition
+ */
 const express = require('express');
 const bodyParser = require("body-parser");
 
+// using local storage as DB to store all object
+// information in files 
 const { LocalStorage } = require('node-localstorage')
 const db = new LocalStorage('./data');
-
-// custom libraries
- const { logger } = require('./api/lib/utils');
-
-// get all routes
-const taxiRoutes = require('./api/v1/routes/taxi-routes');
-const bookingRoutes = require('./api/v1/routes/booking-routes');
-
-const app = express()
-
-app.use(bodyParser.json());
-app.use(logger);
-app.use(express.static("./client"));
-
-app.use("/api/v1/taxi", taxiRoutes);
-app.use("/api/v1/booking", bookingRoutes);
-
-app.get('/', (req, res) => {
-    res.redirect('/index.html');
-});
 
 // clear db
 // db.clear();
 
+// Logger library funtion to logg all request
+ const { logger } = require('./api/lib/utils');
 
-////////////////////
-// Error Handlers
-////////////////////
+// import all router function
+const taxiRoutes = require('./api/v1/routes/taxi-routes');
+const bookingRoutes = require('./api/v1/routes/booking-routes');
+
+
+const app = express()
+
+// load all middleware functions
+app.use(bodyParser.json());
+app.use(logger);
+app.use(express.static("./client"));
+
+// configure routes
+app.use("/api/v1/taxi", taxiRoutes);
+app.use("/api/v1/booking", bookingRoutes);
+
+// configure root url and redirect to UI page
+app.get('/', (req, res) => {
+    res.redirect('/index.html');
+});
+
+////////////////////////////////////////
+// Error Handlers functions 
+////////////////////////////////////////
 
 // Handle 404
 app.use(function(req, res, next) {
@@ -41,7 +50,9 @@ app.use(function(req, res, next) {
     })
 });
 
+
 // Print stacktarace and return only the error message
+// Internal errors are captured here and json response sent
 app.use(function(err, req, res, next) {
     console.log(err);
     res.status(err.status || 500)
@@ -50,6 +61,5 @@ app.use(function(err, req, res, next) {
         message: err.message
     });
 });
-
 
 module.exports = app;

@@ -1,3 +1,6 @@
+/**
+ * Taxi routes
+ */
 const { Router } = require("express");
 
 const { Taxi, TAXI_TYPE} = require('../models/taxi');
@@ -5,10 +8,9 @@ const { Taxi, TAXI_TYPE} = require('../models/taxi');
 const router = new Router();
 
 /** 
- * Get all available taxi
- * source location
+ * Get all available taxi's
  * 
- * Returns: Array of cars
+ * return: [ Taxi ]
  */
 router.get("/", (req, res) => {
     // get all taxi's based on given type
@@ -32,6 +34,8 @@ router.get("/", (req, res) => {
 router.post("/", (req, res) => {
     // get taxi_type, car_details location lat and long
     // from the req body
+
+    // validate data
     if (Taxi.validateReq(req.body)) {
 
         // Object destructuring helps get only information needed
@@ -43,8 +47,6 @@ router.post("/", (req, res) => {
             taxi_type: taxi_type ? taxi_type : '',
             location: location ? location : {}
         }
-
-        // validate data
 
         // add to DB
         let taxi = new Taxi(params);
@@ -100,6 +102,7 @@ router.put("/:id", (req, res) => {
 
 
 /**
+ * Soft delete
  * Remove the taxi from service
  * 
  * input: taxi_id
