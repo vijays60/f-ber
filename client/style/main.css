@@ -96,7 +96,7 @@ body {
 #map{
     height: 300px;
 }
-#taxi-map{
+#taxi-map, #book-map{
     height: 200px;
 }
 

@@ -32,7 +32,7 @@
     <div class="nav-scroller bg-white shadow-sm">
       <nav class="nav nav-underline justify-content-center">
         <a class="nav-link active" href="#" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Add Taxi</a>
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#booktaxi" data-whatever="@mdo">
           Book Taxi
           <span class="badge badge-pill bg-light align-text-bottom" id="taxicount">0</span>
         </a>
@@ -89,7 +89,45 @@
     </div>
 
 
+    <div class="modal fade" id="booktaxi" tabindex="-1" aria-labelledby="examplebooktaxi" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="examplebooktaxi">book Taxi</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
 
+          <form id="booktaxiform" >
+            <div class="modal-body">
+              <div class="alert alert-danger" role="alert" id="bookingerror" style="display: none;"></div>  
+              <div class="alert alert-success" role="alert" id="bookingsuccess" style="display: none;"></div>
+              <div class="form-group">
+                <label for="customer-name" class="col-form-label">* Customer:</label>
+                <input type="text" class="form-control" id="customer-name" required name="customername">
+              </div>
+              <div class="form-group">
+                <label for="taxi_type" class="col-form-label">* Taxi:</label>
+                <select class="form-control" id="taxi_type" required name="taxi_type">
+                  <option value="NORMAL">NORMAL</option>
+                  <option value="PINK">PINK</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">* Location:</label>
+                <div id="book-map" ></div>
+              </div>
+            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
     
 <script src="js/app.js"></script>
 </body>
