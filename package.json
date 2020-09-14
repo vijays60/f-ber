@@ -4,7 +4,7 @@
   "description": "füber, an on call taxi service",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine-node --verbose spec",
+    "test": "jasmine-node spec",
     "start": "node ./src/"
   },
   "repository": {
