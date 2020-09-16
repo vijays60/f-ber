@@ -62,8 +62,33 @@ const calDistanceCost = function(src, dest){
   
 }
 
+const generateRandomPoint =  function() {
+  // bangalore point
+  var x0 = 77.585567;
+  var y0 = 12.981951;
+  
+  // Convert Radius from meters to degrees.
+  //  2km radius from the given lat and lng point.
+  var rd = 2000/111300;
+
+  var u = Math.random();
+  var v = Math.random();
+
+  var w = rd * Math.sqrt(u);
+  var t = 2 * Math.PI * v;
+  var x = w * Math.cos(t);
+  var y = w * Math.sin(t);
+
+  var xp = x/Math.cos(y0);
+
+  // Resulting point.
+  return {'lat': y+y0, 'long': xp+x0};
+}
+
+
 module.exports = { 
   logger, haversine_distance, 
-  pythagorean_distance, calDistanceCost 
+  pythagorean_distance, calDistanceCost,
+  generateRandomPoint
 };
   

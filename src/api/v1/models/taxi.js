@@ -52,7 +52,7 @@ function Taxi({
     this.id = id ? id : null;
     this.driver = driver ? new Driver(driver) : {};
     this.car = car ? new Car(car) : {};
-    this.taxi_type = taxi_type ? taxi_type : TAXI_TYPE.NORMAL;
+    this.taxi_type = taxi_type && taxi_type != '' ? taxi_type : TAXI_TYPE.NORMAL;
     this.location = location ? new Location(location) : {};
     this.status = status ? status : TAXI_STATUS.AVAILABLE;
 }
@@ -94,7 +94,7 @@ Taxi.prototype = {
             db.getItem(db_name)
         ) : [];
         let taxiIndex = taxis.findIndex(ele => ele.id === this.id);
-        console.log(taxiIndex);
+        // console.log(taxiIndex);
         if (taxiIndex >= 0) {
             Object.assign(taxis[taxiIndex], updateObj);
 
@@ -107,14 +107,18 @@ Taxi.prototype = {
         // hard delete not recommended 
         // unless the requirement defines this feature
         // soft delete the record
-        this.updateStatus({status: TAXI_STATUS.DELETED});
+        this.status = TAXI_STATUS.DELETED;
+        this.updateStatus({status: this.status});
     },
     markBooked: function(){
-        this.updateStatus({status: TAXI_STATUS.BOOKED});
+        this.status = TAXI_STATUS.BOOKED;
+        this.updateStatus({status: this.status});
     },
     endtrip: function(location){
+        this.status = TAXI_STATUS.AVAILABLE;
+        this.location = location;
         this.updateStatus({
-            status: TAXI_STATUS.AVAILABLE,
+            status: this.status,
             location
         });
     }
